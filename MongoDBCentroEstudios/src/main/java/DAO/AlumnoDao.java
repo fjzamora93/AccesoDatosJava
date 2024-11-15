@@ -1,61 +1,123 @@
 package DAO;
 import java.util.*;
+
+import com.mongodb.client.FindIterable;
+import com.mongodb.client.MongoCursor;
+import com.mongodb.client.model.Filters;
+import com.mongodb.client.result.DeleteResult;
 import model.*;
 import org.bson.Document;
 import com.mongodb.client.MongoCollection;
 import database.MongoDBConnection;
+import org.bson.conversions.Bson;
 
 public class AlumnoDao {
-    private List<Alumno> alumnos;
+    private List<Alumno> alumnosList;
 
     MongoCollection coleccionAlumnos;
 
 
     public AlumnoDao() {
-        this.alumnos = new ArrayList<>();
-        coleccionAlumnos = new MongoDBConnection().getAlumnosCollecion();
+        this.alumnosList = new ArrayList<>();
+        coleccionAlumnos = new MongoDBConnection().getAlumnosCollection();
     }
 
-    // Método para insertar un alumno
+    /**
+     * Sistema TRADICIONAL para insertar alumno. Tienes que ir campo a campo rellenándolo
+     * */
     public void insertarAlumno(Alumno alumno) {
-        alumnos.add(alumno);
+        alumnosList.add(alumno);
         Document document = new Document()
-                .append("nombre", alumno.getRating())
-                .append("apellido", alumno.getAge())
-                .append("nombre", alumno.getName())
-                .append("correo",alumno.getGender())
-                .append("apellido", alumno.getPhone())
-                .append("correo",alumno.getEmail())
-                .append("edad",alumno.getHigherGrade())
-                .append("edad",alumno.getCalification());
+                .append("rating", alumno.getRating())
+                .append("name", alumno.getName())
+                .append("gender",alumno.getGender())
+                .append("phone", alumno.getPhone())
+                .append("email",alumno.getEmail())
+                .append("higherGrade",alumno.getHigherGrade())
+                .append("calification",alumno.getCalification());
         coleccionAlumnos.insertOne(document);
         System.out.println("Alumno insertado correctamente.");
     }
 
+
+    /**
+     * Sistema POJO: el alumno puede insertarse directamente.
+     * */
+    public void insertarAlumnoPOJO(Alumno alumno){
+        this.coleccionAlumnos.insertOne(alumno);
+    }
+
+    /**
+     * Sistema POJO: de búsqueda directa.
+     * */
+    public void mostrarAlumnos() {
+        FindIterable<Alumno> iterable1 = this.coleccionAlumnos.find(Alumno.class);
+        MongoCursor<Alumno> cursor = iterable1.cursor();
+        while (cursor.hasNext()) {
+            Alumno usuario = cursor.next();
+            usuario.toString();
+        }
+        // Al usar el método de esta manera, NO vamos a cosneguir que lo mapee. Así que utilizaremos el da arriba.
+        // FindIterable<Document> iterable2 =  this.coleccionAlumnos.find();
+    }
+
     // Método para buscar un alumno por su email
     public Alumno buscarAlumnoPorEmail(String email) {
-        for (Alumno alumno : alumnos) {
-            if (alumno.getEmail().equals(email)) {
-                return alumno;
-            }
+        Document filtro = new Document("email", email);
+        FindIterable<Alumno> iterable = this.coleccionAlumnos.find(filtro);
+        MongoCursor<Alumno> cursor = iterable.cursor();
+
+        while (cursor.hasNext()) {
+            Alumno usuario = cursor.next();
+            System.out.println(usuario.toString());
+            return usuario;
         }
-        return null;  // Retorna null si no se encuentra el alumno
+        return null;
     }
 
-    // Método para mostrar todos los alumnos
-    public void mostrarAlumnos() {
-        if (alumnos.isEmpty()) {
-            System.out.println("No hay alumnos registrados.");
-        } else {
-            for (Alumno alumno : alumnos) {
-                System.out.println(alumno);
-            }
+    public List<Alumno> buscarPorCalificacion(int calification){
+        //Limpiamos la búsqueda anterior
+        this.alumnosList.clear();
+
+        // Enfoque tradicional para realizar filtros
+        //Document filter = new Document("calification", calification);
+
+        Bson filter = Filters.and(Filters.eq("calification", calification));
+
+        FindIterable <Alumno> iterable = this.coleccionAlumnos.find(filter);
+        MongoCursor <Alumno> cursor = iterable.cursor();
+
+        while (cursor.hasNext()){
+            Alumno alumno = cursor.next();
+            this.alumnosList.add(alumno);
         }
+        return this.alumnosList;
     }
 
-    // Método para eliminar alumnos con calificación 5 o superior
-    public void darDeBajaAlumnos() {
-        alumnos.removeIf(alumno -> alumno.getCalification() >= 5);
-        System.out.println("Alumnos con calificación 5 o superior han sido dados de baja.");
+
+    /**POJO Dar de baja alumnos calification > 5, el deleteMany requiere un filtro en Bson */
+    public void darDeBajaAlumnos(int calification) {
+        Bson filter = Filters.and(
+                Filters.gt("calification", 5)
+        );
+        DeleteResult result = this.coleccionAlumnos.deleteMany(filter);
+
+        // Verificar cuántos documentos fueron eliminados
+        long deletedCount = result.getDeletedCount();
+        System.out.println(deletedCount + " documentos fueron eliminados.");
     }
+
+    /**POJO para deleteMany con varios filtros */
+    public void darDeBajaPorNombreEdad(String name, int age) {
+
+        // Enfoque CONCISO para CONCATENAR filtros con Filters.and(.. filtros a concatenar...)
+        Bson filtrado =
+                Filters.and(
+                        Filters.eq("nombre", name),
+                        Filters.gt("edad", age),
+                        Filters.lt("edad", 90)
+                );
+        this.coleccionAlumnos.deleteMany(filtrado);
+    }
+
 }

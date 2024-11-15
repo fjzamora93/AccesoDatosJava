@@ -21,12 +21,12 @@ public class MongoDBConnection {
 
     public MongoDBConnection() {
 
-        // todos los datos que tu traduzcas son de un tipo concreto
-        // INSERCIONES -> Usuario
-        // INSERCIONES -> Coches
-        // INSERCIONES -> Ciclos
-        // SELECT -> List<Usuarios>
-        // CodeProvider -> Pojo
+        /**
+         * POJO es el proveedor de codec que se encarga de manejar tus clases Java personalizadas.
+         * Cuando defines PojoCodecProvider.builder().automatic(true).build(),
+         * le estás diciendo a MongoDB que cree codecs automáticos para cada clase Java que uses en la aplicación,
+         * lo cual simplifica el trabajo al no tener que definir manualmente cómo mapear cada clase.
+         * Combinado con el fromRegistries, se añadirá soporte para manejar cada clase automáticamente*/
         codecProvider = PojoCodecProvider.builder().automatic(true).build();
         codecRegistry = CodecRegistries.fromRegistries(
                 MongoClients.create().getCodecRegistry(),
@@ -55,7 +55,7 @@ public class MongoDBConnection {
         }
     }
 
-    public MongoCollection getAlumnosCollecion() {
+    public MongoCollection getAlumnosCollection() {
         MongoDatabase database = mongoClient.getDatabase("academia").withCodecRegistry(codecRegistry);
         return database.getCollection("usuarios", Alumno.class);
     }

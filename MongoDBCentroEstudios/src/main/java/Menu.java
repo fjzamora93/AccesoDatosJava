@@ -193,7 +193,7 @@ public class Menu {
                     break;
 
                 case 9: // Dar de baja a alumnos con calificación 5 o superior
-                    alumnoDao.darDeBajaAlumnos();
+                    alumnoDao.darDeBajaPorNombreEdad("Nombre", 18);
                     break;
 
                 case 10: // Salir
