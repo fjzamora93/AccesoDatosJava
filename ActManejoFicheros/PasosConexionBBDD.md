@@ -14,4 +14,3 @@ CREATE DATABASE Concesionario;
 USE Concesionario;
 ````
 
-Ahora que ya tienes esto, puedes crear la tabla 'coches'.
