@@ -2,10 +2,6 @@ package Controller;
 
 import model.Coche;
 
-import java.io.*;
-
-import java.util.ArrayList;
-
 
 /**  FUNCIONES DE UN CONTROLLER:
 
@@ -30,7 +26,7 @@ import java.util.ArrayList;
 
 */
 
-public class GestorCoches {
+public class CochesDAO {
 
     public void addNew(Coche coche){
         System.out.println(coche.toString());

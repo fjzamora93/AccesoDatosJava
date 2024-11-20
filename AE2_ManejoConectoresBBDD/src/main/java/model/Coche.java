@@ -20,8 +20,6 @@ public class Coche implements Serializable {
     private String modelo;
     private String color;
 
-
-
     public Coche(String matricula, String marca, String modelo, String color) {
         this.matricula = matricula;
         this.marca = marca;
@@ -29,16 +27,15 @@ public class Coche implements Serializable {
         this.color = color;
     }
 
-    public Coche(int id) {
-        this.id = id;
-    }
 
-
-    public void mostrarDatos(){
-        System.out.println("matricula = " + matricula);
-        System.out.println("marca = " + marca);
-        System.out.println("modelo = " + modelo);
-        System.out.println("color = " + color);
+    public void showDetails(){
+        String details = "- Detalles del coche: {" +
+                ", matricula='" + matricula + '\'' +
+                ", marca='" + marca + '\'' +
+                ", modelo='" + modelo + '\'' +
+                ", color='" + color + '\'' +
+                '}';
+        System.out.println(details);
     }
 
 

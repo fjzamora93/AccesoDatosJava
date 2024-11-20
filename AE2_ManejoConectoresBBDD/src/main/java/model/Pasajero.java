@@ -7,9 +7,6 @@ import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
 
-import java.io.Serializable;
-import java.util.Objects;
-
 @Getter
 @Setter
 @AllArgsConstructor
@@ -27,10 +24,7 @@ public class Pasajero {
     }
 
 
-    public void mostrarDatos(){
-        System.out.println("Nombre = " + this.nombre);
-        System.out.println("Edad = " + this.edad);
-        System.out.println("Peso = " + this.peso);
-
+    public void showDetails(){
+        System.out.println("Nombre = " + this.nombre + "Edad = " + this.edad + "Peso = " + this.peso);
     }
 }

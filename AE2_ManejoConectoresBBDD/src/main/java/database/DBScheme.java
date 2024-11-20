@@ -11,6 +11,10 @@ public interface DBScheme {
     String PORT = "3306";
     String DATABASE = "concesionario";
 
+
+    String USER = "root";
+    String PASSWORD = "";
+
     String COL_ID = "id";
 
     String TAB_COCHE = "coches";
