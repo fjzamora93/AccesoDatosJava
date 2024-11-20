@@ -21,9 +21,10 @@ public class PasajeroDAO {
     }
 
     /**Añadir nuevo pasajero*/
-    public void addNew(Pasajero pasajero) throws SQLException {
+    public int addNew(Pasajero pasajero) throws SQLException {
         connection = new DBConnection().getConnection();
-        String query = String.format("INSERT INTO %s (%s, %s, %s) VALUES ?,?,?",
+        String query = String.format(
+                "INSERT INTO %s (%s, %s, %s) VALUES(?,?,?)",
                 DBScheme.TAB_PAS,
                 DBScheme.COL_PAS_NOMBRE, DBScheme.COL_PAS_EDAD, DBScheme.COL_PAS_PESO
                 );
@@ -31,30 +32,33 @@ public class PasajeroDAO {
         preparedStatement.setString(1, pasajero.getNombre());
         preparedStatement.setInt(2, pasajero.getEdad());
         preparedStatement.setInt(3, pasajero.getPeso());
-        preparedStatement.execute();
+        return preparedStatement.executeUpdate();
     }
 
     /**Borrar pasajero por id*/
-    public void deleteById(int id) throws SQLException {
+    public int deleteById(int id) throws SQLException {
         connection = new DBConnection().getConnection();
         String query = String.format("DELETE FROM %s WHERE %s = ?",
                 DBScheme.TAB_PAS, DBScheme.COL_ID);
         preparedStatement = connection.prepareStatement(query);
         preparedStatement.setInt(1, id);
-        preparedStatement.execute();
+        return preparedStatement.executeUpdate();
     }
 
     /**Consulta pasajero por id*/
     public Pasajero findById(int id) throws SQLException {
         connection = new DBConnection().getConnection();
-        String query = String.format("SELECT * FROM %s WHERE %s = id",
+        String query = String.format("SELECT * FROM %s WHERE %s = ?",
                 DBScheme.TAB_PAS, DBScheme.COL_ID);
         preparedStatement = connection.prepareStatement(query);
         preparedStatement.setInt(1, id);
         resultSet = preparedStatement.executeQuery();
-        if (!getResultados(resultSet).isEmpty()){
-            return getResultados(resultSet).get(0);
+        ArrayList<Pasajero> passengerList = getResultados(resultSet);
+        if (!passengerList.isEmpty()){
+            passengerList.get(0).showDetails();
+            return passengerList.get(0);
         } else {
+            System.out.println("Sin coincidencias de búsqueda");
             return null;
         }
 
@@ -63,32 +67,38 @@ public class PasajeroDAO {
     /**Listar todos los pasajeros*/
     public ArrayList<Pasajero> findAll() throws SQLException {
         connection = new DBConnection().getConnection();
-        String query = String.format("SELECT * FROM %s",
+        String query = String.format(
+                "SELECT * FROM %s",
                 DBScheme.TAB_PAS);
         preparedStatement = connection.prepareStatement(query);
         resultSet = preparedStatement.executeQuery();
-        return getResultados(resultSet);
+        ArrayList<Pasajero> passengerList = getResultados(resultSet);
+        for (Pasajero pas:passengerList){
+            pas.showDetails();
+        }
+        return passengerList;
     }
 
     /**Añadir pasajero a coche, id de un pasajero y el id de un coche, y lo añadirá al coche DB.
     //Sería una buena opción mostrar todos los coches disponibles.
      ???? Y cómo se supone que entendemos que un coche está disponible? */
-    public void addPasToCar(int idPas, int idCoche) throws SQLException {
+    public int addPasToCar(int idPas, int idCoche) throws SQLException {
         connection = new DBConnection().getConnection();
-        String query = String.format("INSERT INTO %s WHERE %s = ? AND %s = ?",
+        String query = String.format(
+                "INSERT INTO %s (%s, %s) VALUES (?, ?)",
                 DBScheme.TAB_COCHE_PAS,
                 DBScheme.COL_PAS_ID,
                 DBScheme.COL_COCHE_ID );
         preparedStatement = connection.prepareStatement(query);
         preparedStatement.setInt(1, idPas);
         preparedStatement.setInt(2, idCoche);
-        resultSet = preparedStatement.executeQuery();
+        return preparedStatement.executeUpdate();
     }
 
 
     /**Eliminar pasajero de coche, pedirá un id pasajero y el id coche, y lo eliminará del coche en base de datos.
     // Sería una buena opción mostrar todos los coches y sus pasajeros asociados.*/
-    public void deletePassOnCar(int idPas, int idCoche) throws SQLException {
+    public int deletePassOnCar(int idPas, int idCoche) throws SQLException {
         connection = new DBConnection().getConnection();
         String query = String.format("DELETE FROM %s WHERE %s = ? AND %s = ?",
                 DBScheme.TAB_COCHE_PAS,
@@ -97,12 +107,14 @@ public class PasajeroDAO {
         preparedStatement = connection.prepareStatement(query);
         preparedStatement.setInt(1, idPas);
         preparedStatement.setInt(2, idCoche);
-        resultSet = preparedStatement.executeQuery();
-        pasajerosPorCoche();
+        int rowCount = preparedStatement.executeUpdate();
+
+
+        return rowCount;
     }
 
     /**MOSTRAR TODOS LOS COCHES Y SUS PASAJEROS ASOCIADOS*/
-    public void pasajerosPorCoche() throws SQLException {
+    public void displayPassengersPerCar() throws SQLException {
         connection = new DBConnection().getConnection();
         String query = String.format(
                 "SELECT p.*, c.* " +
@@ -137,6 +149,7 @@ public class PasajeroDAO {
         preparedStatement = connection.prepareStatement(query);
         preparedStatement.setInt(1, idCoche);
         resultSet = preparedStatement.executeQuery();
+
         return getResultados(resultSet);
 
     }

@@ -32,9 +32,9 @@ public interface DBScheme {
     String COL_PAS_PESO = "peso";
 
 
-    String TAB_COCHE_PAS = "coche_pas";
-    String COL_PAS_ID = "id";
-    String COL_COCHE_ID = "id";
+    String TAB_COCHE_PAS = "coches_pasajeros";
+    String COL_PAS_ID = "id_pasajero";
+    String COL_COCHE_ID = "id_coche";
 
 
 }

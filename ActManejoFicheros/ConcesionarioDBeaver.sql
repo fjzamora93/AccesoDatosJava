@@ -23,4 +23,8 @@ create table coches_pasajeros (
 );
 
 
-select * from empleados;
+select * from coches;
+
+select * from pasajeros;
+
+select * from coches_pasajeros;

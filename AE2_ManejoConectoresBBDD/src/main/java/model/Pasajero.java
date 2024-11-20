@@ -25,6 +25,6 @@ public class Pasajero {
 
 
     public void showDetails(){
-        System.out.println("Nombre = " + this.nombre + "Edad = " + this.edad + "Peso = " + this.peso);
+        System.out.println("Nombre = " + this.nombre + ", Edad = " + this.edad + ", Peso = " + this.peso);
     }
 }

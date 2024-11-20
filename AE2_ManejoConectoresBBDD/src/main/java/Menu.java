@@ -1,4 +1,5 @@
 import java.sql.SQLException;
+import java.util.ArrayList;
 import java.util.Scanner;
 import database.DBConnection;
 import DAO.CochesDAO;
@@ -107,12 +108,14 @@ public class Menu {
         int rowCount;
         switch (option) {
             case "1":
-                pasajerosDao.addNew(retrieveDataPassenger());
+                rowCount = pasajerosDao.addNew(retrieveDataPassenger());
+                System.out.println("Filas modificadas " + rowCount);
                 Thread.sleep(2000);
                 break;
             case "2":
                 System.out.println("Inserte el Id a borrar");
-                pasajerosDao.deleteById(scanner.nextInt());
+                rowCount = pasajerosDao.deleteById(scanner.nextInt());
+                System.out.println("Filas modificadas " + rowCount);
                 Thread.sleep(2000);
                 break;
             case "3":
@@ -126,15 +129,24 @@ public class Menu {
                 break;
             case "5":
                 System.out.println("5. Añadir pasajero a coche");
-                pasajerosDao.addPasToCar(scanner.nextInt(), scanner.nextInt());
+                rowCount = pasajerosDao.addPasToCar(scanner.nextInt(), scanner.nextInt());
+                System.out.println("Filas modificadas " + rowCount);
                 break;
             case "6":
                 System.out.println("6. Eliminar pasajero de un coche");
-                pasajerosDao.deletePassOnCar(scanner.nextInt(), scanner.nextInt());
+                rowCount = pasajerosDao.deletePassOnCar(scanner.nextInt(), scanner.nextInt());
+                System.out.println("Filas modificadas " + rowCount);
+                pasajerosDao.displayPassengersPerCar();
                 break;
             case "7":
                 System.out.println("7. Listar pasajeros de un coche");
-                pasajerosDao.findPasOnCar(scanner.nextInt());
+                System.out.println("Introduce la Id del coche cuyos pasajeros quieras conocer.");
+                int idCar = scanner.nextInt();
+                ArrayList<Pasajero> listPasPerCar = pasajerosDao.findPasOnCar(idCar);
+                System.out.println("Mostrar los pasajeros del coche con ID: " + idCar);
+                for (Pasajero pas:listPasPerCar){
+                    pas.showDetails();
+                }
                 break;
             default:
                 System.out.println("Volviendo al menú principal");
