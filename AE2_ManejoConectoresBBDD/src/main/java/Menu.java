@@ -1,4 +1,5 @@
 import java.sql.SQLException;
+import java.sql.SQLIntegrityConstraintViolationException;
 import java.util.ArrayList;
 import java.util.Scanner;
 import database.DBConnection;
@@ -106,6 +107,9 @@ public class Menu {
 
     public static String switchOptionSubmenu(String option) throws InterruptedException, SQLException {
         int rowCount;
+        try {
+
+
         switch (option) {
             case "1":
                 rowCount = pasajerosDao.addNew(retrieveDataPassenger());
@@ -128,31 +132,58 @@ public class Menu {
                 Thread.sleep(4000);
                 break;
             case "5":
-                System.out.println("5. Añadir pasajero a coche");
-                rowCount = pasajerosDao.addPasToCar(scanner.nextInt(), scanner.nextInt());
-                System.out.println("Filas modificadas " + rowCount);
+                addPasToCar();
                 break;
             case "6":
-                System.out.println("6. Eliminar pasajero de un coche");
-                rowCount = pasajerosDao.deletePassOnCar(scanner.nextInt(), scanner.nextInt());
-                System.out.println("Filas modificadas " + rowCount);
-                pasajerosDao.displayPassengersPerCar();
+                removePasFromCar();
                 break;
             case "7":
-                System.out.println("7. Listar pasajeros de un coche");
-                System.out.println("Introduce la Id del coche cuyos pasajeros quieras conocer.");
-                int idCar = scanner.nextInt();
-                ArrayList<Pasajero> listPasPerCar = pasajerosDao.findPasOnCar(idCar);
-                System.out.println("Mostrar los pasajeros del coche con ID: " + idCar);
-                for (Pasajero pas:listPasPerCar){
-                    pas.showDetails();
-                }
+                displayPasFromCar();
                 break;
             default:
                 System.out.println("Volviendo al menú principal");
                 Thread.sleep(2000);
         }
+        } catch (SQLIntegrityConstraintViolationException e) {
+            System.out.println("Operación no aceptada: algo ha salido mal en la base de datos.");
+        } catch (SQLException e) {
+            System.out.println("Error en la operación: " + e.getMessage());
+        }
+
         return option;
+    }
+
+
+    private static void addPasToCar() throws SQLException {
+        System.out.println("5. Añadir pasajero a coche");
+        System.out.println("Estos son todos los coches disponibles: \n");
+        cochesDao.findAll();
+        System.out.println("Inserte id del Pasajero");
+        int idPas = scanner.nextInt();
+        System.out.println("Inserte id del Coche");
+        int idCoche = scanner.nextInt();
+        int rowCount = pasajerosDao.addPasToCar(idPas, idCoche);
+        System.out.println("Filas modificadas " + rowCount);
+    }
+
+    private static void removePasFromCar() throws SQLException {
+        System.out.println("6. Eliminar pasajero de un coche");
+        pasajerosDao.displayPassengersPerCar();
+        int rowCount = pasajerosDao.deletePassOnCar(scanner.nextInt(), scanner.nextInt());
+        System.out.println("Filas modificadas " + rowCount);
+        System.out.println("Mostrando los pasajeros de cada coche: ");
+        pasajerosDao.displayPassengersPerCar();
+    }
+
+    private static void displayPasFromCar() throws SQLException {
+        System.out.println("7. Listar pasajeros de un coche");
+        System.out.println("Introduce la Id del coche cuyos pasajeros quieras conocer.");
+        int idCar = scanner.nextInt();
+        ArrayList<Pasajero> listPasPerCar = pasajerosDao.findPasOnCar(idCar);
+        System.out.println("Mostrar los pasajeros del coche con ID: " + idCar);
+        for (Pasajero pas:listPasPerCar){
+            pas.showDetails();
+        }
     }
 
     /**Obtiene los datos de un coche y devuelve el objeto completo*/
@@ -165,7 +196,6 @@ public class Menu {
         String modelo = scanner.next();
         System.out.println("Inserte la color");
         String color = scanner.next();
-
         return new Coche(matricula, marca, modelo, color);
     }
 

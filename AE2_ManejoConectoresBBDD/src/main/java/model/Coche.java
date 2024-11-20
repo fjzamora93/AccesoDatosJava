@@ -29,7 +29,7 @@ public class Coche implements Serializable {
 
 
     public void showDetails(){
-        String details = "- Detalles del coche: {" +
+        String details = "- Detalles del coche: { id: " + this.id +
                 ", matricula='" + matricula + '\'' +
                 ", marca='" + marca + '\'' +
                 ", modelo='" + modelo + '\'' +

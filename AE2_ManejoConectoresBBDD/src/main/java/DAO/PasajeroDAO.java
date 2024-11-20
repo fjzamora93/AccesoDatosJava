@@ -80,8 +80,7 @@ public class PasajeroDAO {
     }
 
     /**Añadir pasajero a coche, id de un pasajero y el id de un coche, y lo añadirá al coche DB.
-    //Sería una buena opción mostrar todos los coches disponibles.
-     ???? Y cómo se supone que entendemos que un coche está disponible? */
+    //Sería una buena opción mostrar todos los coches disponibles.*/
     public int addPasToCar(int idPas, int idCoche) throws SQLException {
         connection = new DBConnection().getConnection();
         String query = String.format(
@@ -108,8 +107,6 @@ public class PasajeroDAO {
         preparedStatement.setInt(1, idPas);
         preparedStatement.setInt(2, idCoche);
         int rowCount = preparedStatement.executeUpdate();
-
-
         return rowCount;
     }
 
@@ -117,21 +114,16 @@ public class PasajeroDAO {
     public void displayPassengersPerCar() throws SQLException {
         connection = new DBConnection().getConnection();
         String query = String.format(
-                "SELECT p.*, c.* " +
-                        "FROM %s p " +
-                        "INNER JOIN %s cp ON p.%s = cp.%s " +
-                        "INNER JOIN %s c ON cp.%s = c.%s",
-                DBScheme.TAB_PAS,
-                DBScheme.TAB_COCHE_PAS, DBScheme.COL_ID, DBScheme.COL_PAS_ID,
-                DBScheme.TAB_COCHE, DBScheme.COL_COCHE_ID, DBScheme.COL_ID
+                "SELECT * FROM %s ",
+                DBScheme.TAB_COCHE_PAS
         );
         preparedStatement = connection.prepareStatement(query);
         resultSet = preparedStatement.executeQuery();
 
         while (resultSet.next()){
-            String nombre = resultSet.getString(DBScheme.COL_PAS_NOMBRE);
-            String matricula = resultSet.getString(DBScheme.COL_COCHE_MATRICULA);
-            String pasajeroEnCoche = nombre + " - " + matricula;
+            int idPas = resultSet.getInt(DBScheme.COL_PAS_ID);
+            int idCoche = resultSet.getInt(DBScheme.COL_COCHE_ID);
+            String pasajeroEnCoche = "Pasajero con id: " + idPas + " está en el coche con id: " + idCoche;
             System.out.println(pasajeroEnCoche);
         }
 }

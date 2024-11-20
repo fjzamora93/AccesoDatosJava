@@ -130,16 +130,17 @@ public class CochesDAO {
     private ArrayList<Coche> getResultados(ResultSet datosResultantes) throws SQLException {
         ArrayList<Coche> listaResultado = new ArrayList<>();
         while (datosResultantes.next()){
+            int id = resultSet.getInt(DBScheme.COL_ID);
             String matricula = resultSet.getString(DBScheme.COL_COCHE_MATRICULA);
             String marca = resultSet.getString(DBScheme.COL_COCHE_MARCA);
             String modelo = resultSet.getString(DBScheme.COL_COCHE_MODELO);
             String color = resultSet.getString(DBScheme.COL_COCHE_COLOR);
-            listaResultado.add(mapearCoche(matricula,marca,modelo,color));
+            listaResultado.add(mapearCoche(id, matricula,marca,modelo,color));
         }
         return listaResultado;
     }
-    private Coche mapearCoche(String matricula, String marca, String modelo, String color){
-        return new Coche(matricula,marca,modelo,color);
+    private Coche mapearCoche(int id, String matricula, String marca, String modelo, String color){
+        return new Coche(id,matricula,marca,modelo,color);
     }
 
 
