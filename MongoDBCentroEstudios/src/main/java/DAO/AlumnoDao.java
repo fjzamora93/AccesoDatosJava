@@ -71,7 +71,6 @@ public class AlumnoDao {
 
         while (cursor.hasNext()) {
             Alumno usuario = cursor.next();
-            System.out.println(usuario.toString());
             return usuario;
         }
         return null;
@@ -84,7 +83,9 @@ public class AlumnoDao {
         // Enfoque tradicional para realizar filtros
         //Document filter = new Document("calification", calification);
 
-        Bson filter = Filters.and(Filters.eq("calification", calification));
+        Bson filter = Filters.and(
+                Filters.eq("calification", calification)
+        );
 
         FindIterable <Alumno> iterable = this.coleccionAlumnos.find(filter);
         MongoCursor <Alumno> cursor = iterable.cursor();
@@ -109,6 +110,19 @@ public class AlumnoDao {
         System.out.println(deletedCount + " documentos fueron eliminados.");
     }
 
+
+    /**POJO para deleteMany con varios filtros */
+    public long deleteGraduated() {
+        // Enfoque CONCISO para CONCATENAR filtros con Filters.and(.. filtros a concatenar...)
+        Bson filter =
+                Filters.and(
+                        Filters.gte("calification", 5)
+                );
+        return this.coleccionAlumnos.deleteMany(filter).getDeletedCount();
+    }
+
+
+
     /**POJO para deleteMany con varios filtros */
     public void darDeBajaPorNombreEdad(String name, int age) {
 
@@ -117,7 +131,7 @@ public class AlumnoDao {
                 Filters.and(
                         Filters.eq("nombre", name),
                         Filters.gt("edad", age),
-                        Filters.lt("edad", 90)
+                        Filters.lt("edad", 666)
                 );
         this.coleccionAlumnos.deleteMany(filtrado);
     }

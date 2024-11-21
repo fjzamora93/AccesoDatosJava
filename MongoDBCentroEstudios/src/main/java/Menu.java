@@ -34,6 +34,7 @@ public class Menu {
     public static ProfesorDao profesorDao;
     public static AlumnoDao alumnoDao;
     public static MongoDBConnection mongoDBConnection;
+    public static long countRows;
 
     public static void main(String[] args) {
         scanner = new Scanner(System.in);
@@ -47,18 +48,18 @@ public class Menu {
             scanner.nextLine();
 
             switch (opcion) {
-                case 0:
+                case 0:  //OK
                     mongoDBConnection.checkConnection();
                     break;
-                case 1: // Insertar un profesor
+                case 1: // Insertar un profesor OK
                     insertProf();
                     break;
 
-                case 2: // Insertar un alumno
+                case 2: // Insertar un alumno OK
                     insertStudent();
                     break;
 
-                case 3: // Mostrar todos los datos
+                case 3: // Mostrar todos los datos OK
                     System.out.println("\n--- Todos los Datos ---");
                     alumnoDao.mostrarAlumnos();
                     profesorDao.mostrarProfesores();
@@ -76,7 +77,7 @@ public class Menu {
 
                 case 6: // Buscar alumno por email
                     System.out.print("Introduce el email del alumno: ");
-                    String emailBuscadoAlumno = scanner.nextLine();
+                    String emailBuscadoAlumno = scanner.nextLine().toLowerCase().trim();
                     Alumno alumnoEncontrado = alumnoDao.buscarAlumnoPorEmail(emailBuscadoAlumno);
                     if (alumnoEncontrado != null) {
                         System.out.println("Alumno encontrado: " + alumnoEncontrado);
@@ -110,13 +111,16 @@ public class Menu {
                     double nuevaCalificacion = scanner.nextDouble();
                     scanner.nextLine();  // Limpiar el buffer
 
-                    if (!profesorDao.actualizarProfesor(emailActualizar, nuevaCalificacion)) {
+                    if (profesorDao.actualizarProfesor(emailActualizar, nuevaCalificacion) == 0) {
                         System.out.println("No se pudo actualizar el profesor.");
+                        break;
                     }
+                    System.out.println("Profesor actualizado correctamente.");
                     break;
 
                 case 9: // Dar de baja a alumnos con calificación 5 o superior
-                    alumnoDao.darDeBajaPorNombreEdad("Nombre", 18);
+                    countRows = alumnoDao.deleteGraduated();
+                    System.out.println("Se acaban de graduar: " + countRows + " alumnos. Hasta siempre");
                     break;
 
                 case 10: // Salir
