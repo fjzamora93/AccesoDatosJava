@@ -10,12 +10,12 @@ import lombok.Setter;
 @AllArgsConstructor
 @NoArgsConstructor
 abstract class Persona {
-    double rating;
-    int age;
-    String name;
-    String gender;
-    String email;
-    String phone;
+    protected double rating;
+    protected int age;
+    protected String name;
+    protected String gender;
+    protected String email;
+    protected String phone;
 
     // Método abstracto que las clases hijas deberán implementar
     public abstract void mostrarDetalles();

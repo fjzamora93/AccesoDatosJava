@@ -1,5 +1,8 @@
 package model;
 import lombok.*;
+import org.bson.codecs.pojo.annotations.BsonId;
+import org.bson.codecs.pojo.annotations.BsonProperty;
+import org.bson.types.ObjectId;
 
 import java.util.List;
 
@@ -8,8 +11,21 @@ import java.util.List;
 @AllArgsConstructor
 @NoArgsConstructor
 public class Profesor extends Persona {
-    List<String> subjects;
-    String title;
+
+    @BsonId  // Esta anotación es importante para mapear el campo _id de MongoDB a la propiedad id en el POJO
+    @BsonProperty("_id")
+    private ObjectId id;
+
+    private double rating;
+    private int age;
+    private String name;
+    private String gender;
+    private String email;
+    private String phone;
+    private List<String> subjects;
+    private String title;
+
+
 
     public Profesor(double rating, int age, String name, String gender, String email, String phone, List<String> subjects, String title) {
         this.rating = rating;
@@ -22,9 +38,6 @@ public class Profesor extends Persona {
         this.title = title;
     }
 
-    public void actualizarCalificacion(double nuevaCalificacion) {
-        this.rating = nuevaCalificacion;
-    }
 
     @Override
     public String toString() {
@@ -44,4 +57,10 @@ public class Profesor extends Persona {
     public void mostrarDetalles() {
         System.out.println(this.toString());
     }
+
+
+    public void actualizarCalificacion(double nuevaCalificacion) {
+        this.rating = nuevaCalificacion;
+    }
+
 }

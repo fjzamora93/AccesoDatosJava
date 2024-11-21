@@ -1,6 +1,4 @@
 import java.util.Scanner;
-
-import Controller.GestorCoches;
 import model.Coche;
 
 

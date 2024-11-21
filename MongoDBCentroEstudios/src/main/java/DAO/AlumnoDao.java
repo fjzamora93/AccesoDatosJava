@@ -30,10 +30,11 @@ public class AlumnoDao {
         Document document = new Document()
                 .append("rating", alumno.getRating())
                 .append("name", alumno.getName())
+                .append("age", alumno.getAge())
                 .append("gender",alumno.getGender())
                 .append("phone", alumno.getPhone())
                 .append("email",alumno.getEmail())
-                .append("higherGrade",alumno.getHigherGrade())
+                .append("higherGrade",alumno.getHighergrade())
                 .append("calification",alumno.getCalification());
         coleccionAlumnos.insertOne(document);
         System.out.println("Alumno insertado correctamente.");
@@ -55,7 +56,8 @@ public class AlumnoDao {
         MongoCursor<Alumno> cursor = iterable1.cursor();
         while (cursor.hasNext()) {
             Alumno usuario = cursor.next();
-            usuario.toString();
+            System.out.println(usuario.toString());
+
         }
         // Al usar el método de esta manera, NO vamos a cosneguir que lo mapee. Así que utilizaremos el da arriba.
         // FindIterable<Document> iterable2 =  this.coleccionAlumnos.find();

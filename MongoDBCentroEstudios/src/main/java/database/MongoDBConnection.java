@@ -44,7 +44,7 @@ public class MongoDBConnection {
 
     public void checkConnection() {
         try {
-            MongoDatabase database = mongoClient.getDatabase("centro_estudios");
+            MongoDatabase database = mongoClient.getDatabase(DBScheme.NAMEDB);
             MongoIterable<String> collections = database.listCollectionNames();
             System.out.println("Colecciones en la base de datos 'academia':");
             for (String collectionName : collections) {
@@ -56,13 +56,13 @@ public class MongoDBConnection {
     }
 
     public MongoCollection getAlumnosCollection() {
-        MongoDatabase database = mongoClient.getDatabase("academia").withCodecRegistry(codecRegistry);
-        return database.getCollection("usuarios", Alumno.class);
+        MongoDatabase database = mongoClient.getDatabase(DBScheme.NAMEDB).withCodecRegistry(codecRegistry);
+        return database.getCollection(DBScheme.COLLECTION_STU, Alumno.class);
     }
 
     public MongoCollection getProfesoresCollection(){
-        MongoDatabase database = mongoClient.getDatabase("academia").withCodecRegistry(codecRegistry);
-        return database.getCollection("cursos",Profesor.class);
+        MongoDatabase database = mongoClient.getDatabase(DBScheme.NAMEDB).withCodecRegistry(codecRegistry);
+        return database.getCollection(DBScheme.COLLECTION_PROF, Profesor.class);
     }
 }
 

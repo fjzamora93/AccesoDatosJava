@@ -2,6 +2,7 @@ package DAO;
 import java.util.*;
 
 import com.mongodb.client.FindIterable;
+import com.mongodb.client.MongoCursor;
 import model.*;
 import org.bson.Document;
 import com.mongodb.client.MongoCollection;
@@ -11,7 +12,6 @@ import database.MongoDBConnection;
 public class ProfesorDao {
     private List<Profesor> profesores;
     private MongoCollection coleccionProfesores;
-    private MongoCollection<Document> profesoresCollection;
 
 
     public ProfesorDao() {
@@ -21,18 +21,8 @@ public class ProfesorDao {
 
     // Método para insertar un profesor
     public void insertarProfesor(Profesor profesor) {
-        profesores.add(profesor);
-        Document document = new Document()
-                .append("nombre", profesor.getRating())
-                .append("apellido", profesor.getAge())
-                .append("nombre", profesor.getName())
-                .append("correo",profesor.getGender())
-                .append("apellido", profesor.getPhone())
-                .append("correo",profesor.getEmail())
-                .append("edad",profesor.getSubjects())
-                .append("edad",profesor.getTitle());
-        coleccionProfesores.insertOne(document);
-        System.out.println("Profesor insertado correctamente.");
+        coleccionProfesores.insertOne(profesor);
+        System.out.println("Profesor insertado correctamente." + profesor.toString());
     }
 
     // Método para buscar profesores por rango de edad
@@ -48,32 +38,14 @@ public class ProfesorDao {
 
     // Método para mostrar todos los profesores
     public void mostrarProfesores() {
-        // Obtener todos los documentos de la colección "profesores"
-        FindIterable<Document> profesoresDocs = profesoresCollection.find();
-
-        // Verificar si la colección tiene documentos
-        if (!profesoresDocs.iterator().hasNext()) {
-            System.out.println("No hay profesores registrados en la base de datos.");
-        } else {
-            // Recorrer todos los documentos y mostrar la información de los profesores
-            for (Document doc : profesoresDocs) {
-                double rating = doc.getDouble("rating");
-                String nombre = doc.getString("nombre");
-                String gender = doc.getString("gender");
-                String email = doc.getString("email");
-                String phone = doc.getString("phone");
-                int edad = doc.getInteger("edad");
-                double calificacion = doc.getDouble("calificacion");
-                List<String> subjects = (List<String>) doc.get("subjects");
-                String title = doc.getString("title");
-
-                // Crear un objeto Profesor
-                Profesor profesor = new Profesor(rating, edad, nombre, gender, email, phone, subjects, title);
-
-                // Mostrar el profesor
-                profesor.mostrarDetalles();
-            }
+        FindIterable<Profesor> iterable1 = this.coleccionProfesores.find(Profesor.class);
+        MongoCursor<Profesor> cursor = iterable1.cursor();
+        while (cursor.hasNext()) {
+            Profesor usuario = cursor.next();
+            System.out.println("-" + usuario.toString());
         }
+        // Al usar el método de esta manera, NO vamos a cosneguir que lo mapee. Así que utilizaremos el da arriba.
+        // FindIterable<Document> iterable2 =  this.coleccionAlumnos.find();
     }
 
     // Método para actualizar la calificación de un profesor por email

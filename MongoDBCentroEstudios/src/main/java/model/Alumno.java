@@ -2,6 +2,7 @@ package model;
 import lombok.*;
 import org.bson.codecs.pojo.annotations.BsonId;
 import org.bson.codecs.pojo.annotations.BsonProperty;
+import org.bson.types.ObjectId;
 
 
 @Getter
@@ -9,8 +10,9 @@ import org.bson.codecs.pojo.annotations.BsonProperty;
 @AllArgsConstructor
 @NoArgsConstructor
 public class Alumno extends Persona {
-    @BsonId  // Esta anotación es importante para mapear el campo _id de MongoDB a la propiedad id en el POJO
-    private String id;  // MongoDB asigna automáticamente un valor único a _id, aquí lo mapeamos como String
+    @BsonId // Esta anotación es importante para mapear el campo _id de MongoDB a la propiedad id en el POJO
+    @BsonProperty("_id")
+    private ObjectId id;
 
     private double rating;
     private int age;
@@ -19,12 +21,9 @@ public class Alumno extends Persona {
     private String email;
     private String phone;
 
-    // Hay un error tipográfico en la base de datos de mongo, nosotros vamos a hacer un mapeo para "ignorarlo"
-    @BsonProperty("calificaation")
-    private double calification;
 
-    @BsonProperty("higher_grade")  // Mapeo explícito de "higher_grade" en MongoDB a "higherGrade" en el POJO
-    private String higherGrade;
+    private double calification;
+    private String highergrade;
 
     private boolean FCTs;
 
@@ -37,7 +36,7 @@ public class Alumno extends Persona {
         this.email = email;
         this.phone = phone;
         this.calification = calification;
-        this.higherGrade = higherGrade;
+        this.highergrade = higherGrade;
     }
 
     @Override
@@ -50,7 +49,7 @@ public class Alumno extends Persona {
                 ", email='" + email + '\'' +
                 ", phone='" + phone + '\'' +
                 ", calification=" + calification +
-                ", higherGrade='" + higherGrade + '\'' +
+                ", higherGrade='" + highergrade + '\'' +
                 '}';
     }
 
@@ -58,4 +57,6 @@ public class Alumno extends Persona {
     public void mostrarDetalles() {
         System.out.println(this.toString());
     }
+
+
 }
